@@ -1,0 +1,19 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>{{c}} Listings</h2>
+    {% for l in listings %}
+    <a href="/listing/{{l.id}}" style="color: black;">
+    <div style="height: 300px; border: 1px solid black; margin-bottom: 20px;" >
+    <img src="{{l.image.url}}" style="max-height:100%; max-width: 30%;">
+    <div id="details" style="float: right; width: 69%;">
+        <b style="padding: 0px; margin: 0px;" >{{l.title}}</b><br>
+        <span>{{l.description}}</span><br>
+        <b>price : </b>{{l.price}}<br>
+        <span>Created on {{l.date}}</span>
+    </div>
+    
+    </div>
+</a>
+    {% endfor %}
+{% endblock %}

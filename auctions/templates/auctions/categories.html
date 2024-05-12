@@ -1,0 +1,10 @@
+{% extends 'auctions/layout.html' %}
+{% block body %}
+<ul>
+    <li><a href="/listings/others" style="text-decoration: none;">Others</a> </li>
+    {% for c in categories %}
+    <li><a href="/listings/{{c.name}}" style="text-decoration: none;">{{c.name}}</a> </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

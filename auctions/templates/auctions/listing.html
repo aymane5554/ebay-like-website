@@ -1,0 +1,112 @@
+{% extends 'auctions/layout.html' %}
+{% block body %}
+<h1>
+    {{listing.title}} {% if listing.status == "closed" %}
+    (closed){% endif %}
+</h1>
+
+{% if listing.status == "closed" %}
+<h3>
+    {% if listing.current_bid != None %}
+    {{listing.current_bid.user.username}} won the auction.
+    {% else %}
+    no one won the auction
+    {% endif %}
+</h3>
+{% endif %}
+
+
+{% if user.is_authenticated %}
+{% if w == None %}
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" class="btn btn-outline-secondary" name="a" value="Add To Watchlist">
+</form>
+{% else %}
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" class="btn btn-outline-secondary" name="r" value="Remove From Watchlist">
+</form>
+{% endif %}
+{% endif %}
+<center><img src="{{listing.image.url}}" alt="product_img" style="max-height:600px; max-width: 100%;"></center>
+<div>
+    <h3>
+        Description
+    </h3>
+    <p>
+        {{listing.description}}
+    </p>
+    <h3>
+        {% if bids > 0 %}
+        ${{listing.current_bid.amount}}
+        {% else %}
+        ${{listing.price}}
+        {% endif %}
+    </h3>
+    {% if user.is_authenticated and listing.status == "active" %}
+    <form method="post">
+        {% csrf_token %}
+        <span>{{bids}} bid(s) so far , {% if request.user.username == listing.current_bid.user.username %} 
+            your bid is the current bid
+            {% endif %}
+        </span>
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="floatingInput" placeholder="name@example.com" name="p">
+            <label for="floatingInput">Place a Bid</label>
+          </div>
+        {% if msg %}
+            {{msg}}
+        {% endif %}
+        <input type="submit" class="btn btn-outline-primary" name="b" value="bid">
+    </form>
+    {% endif %}
+    <h3>
+        Details
+    </h3>
+    <ul>
+        <li>
+            listed by : {{listing.lister}}
+        </li>
+        <li>
+            {% if listing.category != None%}
+            Category : <a href="/listings/{{listing.category.name}}" style="text-decoration: none;">{{listing.category.name}}</a> 
+            {% else %}
+            Category : <a href="/listings/others" style="text-decoration: none;">Others</a>
+            {% endif %}
+        </li>
+    </ul>
+    {% if user.is_authenticated %}
+        {% if listing.lister.username == request.user.username and listing.status == "active" %}
+            <form method="post">
+            {% csrf_token %}
+                <input type="submit" class="btn btn-outline-danger" name="close" value="close listing">
+            </form>
+        {% endif %}
+    {% endif %}
+    <h3>
+        Comments
+    </h3>
+    {% if user.is_authenticated %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-floating">
+            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea" name="cmnt" style="margin-bottom: 10px;"></textarea>
+            <label for="floatingTextarea">Comment</label>
+          </div>
+          <div class="input-group mb-3">
+            <input type="submit" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" value="comment">
+          </div>
+    </form>
+    {% endif %}
+    {% for c in comments %}
+    <div style="border: 1px black solid; border-radius: 10px; padding: 10px;">
+        <b>{{c.user}}</b>
+        <p>
+            {{c.text}}
+        </p>
+        {{c.date}}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
